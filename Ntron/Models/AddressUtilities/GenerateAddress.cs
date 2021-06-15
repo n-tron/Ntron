@@ -6,6 +6,11 @@ namespace Ntron.Models.AddressUtilities
 {
     public class GenerateAddress
     {
+        public class Request
+        {
+            public string Value { get; set; }
+        }
+
         public class Response 
         {
             public string PrivateKey { get; set; }
