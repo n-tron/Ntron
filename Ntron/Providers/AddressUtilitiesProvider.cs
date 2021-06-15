@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Ntron.Helpers;
 using Ntron.Models.AddressUtilities;
 using System;
 using System.Collections.Generic;
@@ -12,22 +14,25 @@ namespace Ntron.Providers
     {
         Task<GenerateAddress.Response> GenerateAddress();
         Task<CreateAddress.Response> CreateAddress(CreateAddress.Request model);
-
         Task<ValidateAddress.Response> ValidateAddress(ValidateAddress.Request model);
         
     }
     public class AddressUtilitiesProvider : IAddressUtilitiesProvider
     {
+        private readonly INtron _ntron;
         private readonly IHttpClientFactory _httpClientFactory;
-        public AddressUtilitiesProvider(IHttpClientFactory httpClientFactory)
+
+        public AddressUtilitiesProvider(INtron ntron, IHttpClientFactory httpClientFactory)
         {
+            _ntron = ntron;
             _httpClientFactory = httpClientFactory;
         }
         public async Task<CreateAddress.Response> CreateAddress(CreateAddress.Request model)
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "ntron url");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _ntron.Url);
             string content = JsonConvert.SerializeObject(model);
             request.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            request.Headers.Add("TRON-PRO-API-KEY", _ntron.APIKey);
 
             HttpClient client = _httpClientFactory.CreateClient();
             HttpResponseMessage httpResponseMessage = await client.SendAsync(request);
