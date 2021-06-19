@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Ntron.Models.General;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Ntron.Models.AddressUtilities
 {
-    public class AddressUtilities
+    public class CreateAddress
     {
         public class Request
         {
-            public string Value { get; set; }
+            public string value { get; set; }
         }
-        public class Response 
+        public class Response : GeneralResponse.ErrorResponse
         {
             public string Base58CheckAddress { get; set; }
             public string Value { get; set; }
@@ -19,11 +20,6 @@ namespace Ntron.Models.AddressUtilities
 
     public class GenerateAddress
     {
-        public class Request
-        {
-            public string Value { get; set; }
-        }
-
         public class Response
         {
             public string PrivateKey { get; set; }
@@ -36,12 +32,13 @@ namespace Ntron.Models.AddressUtilities
     {
         public class Request
         {
-            public string Address { get; set; }
+            public string address { get; set; }
         }
 
-        public class Response
+        public class Response : GeneralResponse.ErrorResponse
         {
             public bool Result { get; set; }
+            public string Message { get; set; }
         }
     }
 }

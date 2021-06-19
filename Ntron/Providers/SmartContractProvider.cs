@@ -1,25 +1,48 @@
-﻿using Ntron.Models.SmartContract;
+﻿using Newtonsoft.Json;
+using Ntron.Models.SmartContract;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ntron.Providers
 {
     public interface ISmartContractProvider 
     {
-        GetContract.Response GetContract(GetContract.Request model);
+        Task<object> GetContract(GetContract.Request model);
         TriggerSmartContract.Response TriggerSmartContract(TriggerSmartContract.Request model);
-        DeployContract.Response DeployContract(DeployContract.Request model);
+        Task<object> DeployContract(DeployContract.Request model);
 
     }
     public class SmartContractProvider : ISmartContractProvider
     {
-        public DeployContract.Response DeployContract(DeployContract.Request model)
+        private readonly INtron _ntron;
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public SmartContractProvider(INtron ntron, IHttpClientFactory httpClientFactory)
         {
-            throw new NotImplementedException();
+            _ntron = ntron;
+            _httpClientFactory = httpClientFactory;
         }
 
-        public GetContract.Response GetContract(GetContract.Request model)
+        public async Task<object> DeployContract(DeployContract.Request model)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"{_ntron.Url}/wallet/deploycontract");
+            string content = JsonConvert.SerializeObject(model);
+            request.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            request.Headers.Add("TRON-PRO-API-KEY", _ntron.APIKey);
+
+            HttpClient client = _httpClientFactory.CreateClient();
+            HttpResponseMessage httpResponseMessage = await client.SendAsync(request);
+            string result = httpResponseMessage.Content.ReadAsStringAsync().Result;
+
+            object response = JsonConvert.DeserializeObject<object>(result);
+
+            return response;
+        }
+
+        public Task<object> GetContract(GetContract.Request model)
         {
             throw new NotImplementedException();
         }
@@ -28,5 +51,6 @@ namespace Ntron.Providers
         {
             throw new NotImplementedException();
         }
+
     }
 }

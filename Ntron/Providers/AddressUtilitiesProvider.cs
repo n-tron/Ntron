@@ -13,7 +13,7 @@ namespace Ntron.Providers
     public interface IAddressUtilitiesProvider
     {
         Task<GenerateAddress.Response> GenerateAddress();
-        Task<AddressUtilities.Response> CreateAddress(AddressUtilities.Request model);
+        Task<CreateAddress.Response> CreateAddress(CreateAddress.Request model);
         Task<ValidateAddress.Response> ValidateAddress(ValidateAddress.Request model);
         
     }
@@ -27,7 +27,8 @@ namespace Ntron.Providers
             _ntron = ntron;
             _httpClientFactory = httpClientFactory;
         }
-        public async Task<AddressUtilities.Response> CreateAddress(AddressUtilities.Request model)
+
+        public async Task<CreateAddress.Response> CreateAddress(CreateAddress.Request model)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"{_ntron.Url}/wallet/createAddress");
             string content = JsonConvert.SerializeObject(model);
@@ -38,7 +39,7 @@ namespace Ntron.Providers
             HttpResponseMessage httpResponseMessage = await client.SendAsync(request);
             string result = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            AddressUtilities.Response response = JsonConvert.DeserializeObject<AddressUtilities.Response>(result);
+            CreateAddress.Response response = JsonConvert.DeserializeObject<CreateAddress.Response>(result);
 
             return response;
         }
