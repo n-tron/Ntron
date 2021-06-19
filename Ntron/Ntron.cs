@@ -28,6 +28,8 @@ namespace Ntron
             services.AddSingleton<INtron>(ntron);
             services.AddHttpClient();
             services.AddScoped<IAddressUtilitiesProvider, AddressUtilitiesProvider>();
+            services.AddScoped<ISmartContractProvider, SmartContractProvider>();
+            services.AddScoped<ITRC10TokenProvider, TRC10TokenProvider>();
         }
     }
 }
